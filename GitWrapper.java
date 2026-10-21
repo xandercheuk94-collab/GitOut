@@ -15,6 +15,7 @@ public class GitWrapper {
     public void init() {
         git.init();
     }
+
     /**
      * Stages a file for the next commit.
      * This method adds a file to the index file.
@@ -22,6 +23,7 @@ public class GitWrapper {
      * If the file is a directory, it throws an IOException.
      * If the file is already in the index, it does nothing.
      * If the file is successfully staged, it creates a blob for the file.
+     * 
      * @param filePath The path to the file to be staged.
      */
     public void add(String filePath) {
@@ -31,13 +33,15 @@ public class GitWrapper {
             git.createBLOB(filePath);
             git.updateIndex(filePath);
         } catch (Exception e) {
-            System.out.println("IOException");;
+            System.out.println("IOException");
+            ;
         }
     }
 
     /**
      * Creates a commit with the given author and message.
-     * It should capture the current state of the repository by building trees based on the index file,
+     * It should capture the current state of the repository by building trees based
+     * on the index file,
      * writing the tree to the objects directory,
      * writing the commit to the objects directory,
      * updating the HEAD file,

@@ -21,7 +21,7 @@ public class git {
         if (args.length > 0 && args[0].equals("init")) {
             init();
         }
-        
+
     }
 
     public static void init() {
@@ -44,7 +44,7 @@ public class git {
             File index = new File(git, "index");
             if (!index.exists()) {
                 index.createNewFile();
-                
+
             } else {
                 fileExistsCounter++;
             }
@@ -64,7 +64,15 @@ public class git {
             System.out.println("error");
             e.printStackTrace();
         }
-        if (fileExistsCounter == 4) {
+
+        File refs = new File(git, "refs");
+        if (!refs.exists()) {
+            objects.mkdir();
+        } else {
+            fileExistsCounter++;
+        }
+
+        if (fileExistsCounter == 5) {
             System.out.println("Git Repository Already Exists");
         } else {
             System.out.println("Git Repository Created");
@@ -76,8 +84,8 @@ public class git {
         return hashed;
     }
 
-    public static void createBLOB(String fileName) throws IOException{
-        
+    public static void createBLOB(String fileName) throws IOException {
+
         File file = new File(fileName);
         if (file.exists() == false || file.isDirectory() == true) {
             throw new IOException("file either doesnt exists or is directory");
@@ -174,10 +182,10 @@ public class git {
         } catch (IOException e) {
             return "";
         }
-        
+
     }
 
-    public static StringBuilder createTreeHelper(File dir) throws IOException {            
+    public static StringBuilder createTreeHelper(File dir) throws IOException {
         StringBuilder sb = new StringBuilder();
         File[] fileArr = dir.listFiles();
         for (File file : fileArr) {
@@ -221,30 +229,31 @@ public class git {
             BufferedReader br = new BufferedReader(new FileReader("git/index"));
             ArrayList<ArrayList<String>> workingList = new ArrayList<>();
 
-/* 
-
-            ArrayList<ArrayList<String>> toBeSorted = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                ArrayList<String> entry = new ArrayList<>(List.of("blob " + line.split(" ")[0]));
-                workingList.add(entry);
-
-                ArrayList<String> paths = new ArrayList<>();
-                for (String dir : line.split(" ")[1].split("/")) {
-                    paths.add(dir);
-                }
-                toBeSorted.add(paths);
-            }
-
-            ArrayList<ArrayList<String>> sorted = pathSorter(toBeSorted);
-            for (int i = 0; i < workingList.size(); i++) {
-                for (int j = 0; j < sorted.get(i).size(); j++) {
-                    workingList.get(i).add(sorted.get(i).get(j));
-                }
-            }
-
-            br.close();
-*/
+            /*
+             * 
+             * ArrayList<ArrayList<String>> toBeSorted = new ArrayList<>();
+             * String line;
+             * while ((line = br.readLine()) != null) {
+             * ArrayList<String> entry = new ArrayList<>(List.of("blob " +
+             * line.split(" ")[0]));
+             * workingList.add(entry);
+             * 
+             * ArrayList<String> paths = new ArrayList<>();
+             * for (String dir : line.split(" ")[1].split("/")) {
+             * paths.add(dir);
+             * }
+             * toBeSorted.add(paths);
+             * }
+             * 
+             * ArrayList<ArrayList<String>> sorted = pathSorter(toBeSorted);
+             * for (int i = 0; i < workingList.size(); i++) {
+             * for (int j = 0; j < sorted.get(i).size(); j++) {
+             * workingList.get(i).add(sorted.get(i).get(j));
+             * }
+             * }
+             * 
+             * br.close();
+             */
 
             String line = br.readLine();
             while (line != null) {
@@ -261,11 +270,8 @@ public class git {
                 line = br.readLine();
             }
 
-
             workingList = pathSorter(workingList);
             br.close();
-
-
 
             ArrayList<ArrayList<String>> finalTree = createTreeFromIndexHelper(workingList);
             StringBuilder rootStr = new StringBuilder();
@@ -281,21 +287,22 @@ public class git {
             String[] finals = rootStr.toString().split(" ");
             String fhash = finals[1];
             return fhash;
-        } catch(IOException e) {
+        } catch (IOException e) {
             return "";
         }
     }
 
-    public static ArrayList<ArrayList<String>> createTreeFromIndexHelper(ArrayList<ArrayList<String>> arr) throws IOException{
+    public static ArrayList<ArrayList<String>> createTreeFromIndexHelper(ArrayList<ArrayList<String>> arr)
+            throws IOException {
         if (arr.size() >= 1) {
             ArrayList<String> pathToMerge = new ArrayList<>();
             int countFinishedDirs = 0;
-            for (int i = 0; i < arr.size(); i++) {    
+            for (int i = 0; i < arr.size(); i++) {
                 if (arr.get(i).size() == 2) {
                     countFinishedDirs++;
                     continue;
-                }        
-                
+                }
+
                 if (pathToMerge.isEmpty()) {
                     pathToMerge = arr.get(i);
                 }
@@ -316,7 +323,7 @@ public class git {
                             firstLine = false;
 
                             treeEntry.add(arr.get(i).get(j));
-                        }  
+                        }
                     }
                     String hash = createTree(path.toString());
 
@@ -360,7 +367,6 @@ public class git {
                 rootw.write(finalStr);
                 rootw.close();
 
-
                 String lastOne = "tree " + hash + " (root)";
                 ArrayList<String> puttingIntoArray = new ArrayList<>(List.of(lastOne));
                 ArrayList<ArrayList<String>> finalArray = new ArrayList<>(List.of(puttingIntoArray));
@@ -369,9 +375,9 @@ public class git {
 
             arr = createTreeFromIndexHelper(arr);
         }
-        
+
         return arr;
-        
+
     }
 
     public static ArrayList<ArrayList<String>> pathSorter(ArrayList<ArrayList<String>> arr) {
@@ -395,7 +401,7 @@ public class git {
         return sorted;
     }
 
-    public static String commit (String author, String message) throws IOException {
+    public static String commit(String author, String message) throws IOException {
         try {
             BufferedReader br = new BufferedReader(new FileReader("git/HEAD"));
             String parent = br.readAllAsString();
@@ -433,7 +439,8 @@ public class git {
 
     }
     // get original hash of root of the commit
-    // make the full text (probably another method, recursin), return the full workinglist
+    // make the full text (probably another method, recursin), return the full
+    // workinglist
     // rewrite the file from this workinglist
 
     public static void regenerateIndex(String commitHash) throws IOException {
@@ -455,10 +462,8 @@ public class git {
         fw.close();
     }
 
-
-
     // while
-    public static ArrayList<String> makeIndex(String treeHash, String path) throws IOException{
+    public static ArrayList<String> makeIndex(String treeHash, String path) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader("git/objects/" + treeHash));
         String line = br.readLine();
@@ -534,7 +539,7 @@ public class git {
                 String path = line.split(" ")[1];
                 String[] parts = path.split("/");
                 String dir = "";
-                for (int i = 0; i < parts.length -1; i++) {
+                for (int i = 0; i < parts.length - 1; i++) {
                     if (i > 0) {
                         dir = dir + "/";
                     }
@@ -551,7 +556,6 @@ public class git {
 
                 line = br.readLine();
 
-                
             }
             br.close();
 
@@ -559,13 +563,9 @@ public class git {
             fw.write(commitHash);
             fw.close();
 
-
-
-
         } catch (Exception e) {
             System.out.println("IOException");
         }
     }
 
-    
 }
