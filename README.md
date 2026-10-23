@@ -16,3 +16,6 @@ added gitwrapper, it is easy to run git commands now
 added regenerate index, i also remade the part of the createtreefromindex bc i didnt really follow it at all so i just coded it agian since it wasn't working. it uses ur pathsorter but it builds each entry with its hash and its path together from the start, then it sorts all entries
 
 added checkout
+
+added createBranch
+implemented branches
