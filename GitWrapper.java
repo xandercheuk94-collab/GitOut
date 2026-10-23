@@ -90,4 +90,8 @@ public class GitWrapper {
             System.out.println("IOException");
         }
     }
+
+    public void createBranch(String branchName) throws IOException {
+        git.createBranch(branchName);
+    }
 }

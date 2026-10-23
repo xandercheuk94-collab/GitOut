@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Verify2 {
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         git.init();
         FileWriter fw1 = new FileWriter("f3/text5.txt");
         fw1.write("bonjour");
